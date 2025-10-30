@@ -1,0 +1,26 @@
+{% extends 'todo/base.html' %}
+{% block title %}{{ task.title|default:"New Task" }}{% endblock %}
+{% block content %}
+<div class="col-md-6 offset-md-3">
+  <h3 class="mb-3">{{ task.title|default:"Create Task" }}</h3>
+  <form method="POST">
+    {% csrf_token %}
+    <div class="mb-3">
+      <label>Title</label>
+      <input type="text" name="title" class="form-control" value="{{ task.title|default:'' }}" required>
+    </div>
+    <div class="mb-3">
+      <label>Description</label>
+      <textarea name="description" class="form-control">{{ task.description|default:'' }}</textarea>
+    </div>
+    {% if task %}
+      <div class="form-check mb-3">
+        <input type="checkbox" name="complete" class="form-check-input" {% if task.complete %}checked{% endif %}>
+        <label class="form-check-label">Completed</label>
+      </div>
+    {% endif %}
+    <button type="submit" class="btn btn-success">Save</button>
+    <a href="{% url 'tasks' %}" class="btn btn-secondary">Cancel</a>
+  </form>
+</div>
+{% endblock %}

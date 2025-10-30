@@ -46,7 +46,8 @@ def logout_user(request):
 
 
 def task_list(request):
-    tasks = Task.objects.filter(user=request.user)
+    tasks = Task.objects.all()
+
 
     # Search
     search_query = request.GET.get('q') or ''

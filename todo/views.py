@@ -44,7 +44,7 @@ def logout_user(request):
 
 
 
-@login_required
+
 def task_list(request):
     tasks = Task.objects.filter(user=request.user)
 
@@ -68,7 +68,7 @@ def task_list(request):
 
 
 
-@login_required
+
 def task_create(request):
     if request.method == 'POST':
         title = request.POST['title']
@@ -80,7 +80,7 @@ def task_create(request):
 
 
 
-@login_required
+
 def task_update(request, pk):
     task = Task.objects.get(id=pk, user=request.user)
     if request.method == 'POST':
@@ -94,7 +94,7 @@ def task_update(request, pk):
 
 
 # ❌ Delete Task
-@login_required
+
 def task_delete(request, pk):
     task = Task.objects.get(id=pk, user=request.user)
     if request.method == 'POST':

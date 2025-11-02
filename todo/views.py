@@ -1,5 +1,4 @@
-# todo/views.py
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.forms import UserCreationForm
@@ -7,7 +6,7 @@ from django.contrib import messages
 from .models import Task
 
 
-
+# 🔹 Register a new user
 def register_user(request):
     if request.method == 'POST':
         form = UserCreationForm(request.POST)
@@ -22,7 +21,7 @@ def register_user(request):
     return render(request, 'todo/register.html', {'form': form})
 
 
-
+# 🔹 Login view
 def login_user(request):
     if request.method == 'POST':
         username = request.POST.get('username')
@@ -37,17 +36,16 @@ def login_user(request):
     return render(request, 'todo/login.html')
 
 
-
+# 🔹 Logout view
 def logout_user(request):
     logout(request)
     return redirect('login')
 
 
-
-
+# 🔹 List all tasks (only for logged-in users)
+@login_required(login_url='/login/')
 def task_list(request):
-    tasks = Task.objects.all()
-
+    tasks = Task.objects.filter(user=request.user)
 
     # Search
     search_query = request.GET.get('q') or ''
@@ -67,9 +65,8 @@ def task_list(request):
     })
 
 
-
-
-
+# 🔹 Create a new task (only for logged-in users)
+@login_required(login_url='/login/')
 def task_create(request):
     if request.method == 'POST':
         title = request.POST['title']
@@ -80,10 +77,10 @@ def task_create(request):
     return render(request, 'todo/task_form.html')
 
 
-
-
+# 🔹 Update a task (only for logged-in users)
+@login_required(login_url='/login/')
 def task_update(request, pk):
-    task = Task.objects.get(id=pk, user=request.user)
+    task = get_object_or_404(Task, id=pk, user=request.user)
     if request.method == 'POST':
         task.title = request.POST['title']
         task.description = request.POST.get('description', '')
@@ -94,10 +91,10 @@ def task_update(request, pk):
     return render(request, 'todo/task_form.html', {'task': task})
 
 
-# ❌ Delete Task
-
+# 🔹 Delete a task (only for logged-in users)
+@login_required(login_url='/login/')
 def task_delete(request, pk):
-    task = Task.objects.get(id=pk, user=request.user)
+    task = get_object_or_404(Task, id=pk, user=request.user)
     if request.method == 'POST':
         task.delete()
         messages.success(request, 'Task deleted.')
